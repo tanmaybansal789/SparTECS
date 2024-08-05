@@ -1,0 +1,3 @@
+/Users/puru/CLionProjects/SparTECS/cmake-build-debug/CMakeFiles/SparTECS.dir
+/Users/puru/CLionProjects/SparTECS/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/puru/CLionProjects/SparTECS/cmake-build-debug/CMakeFiles/rebuild_cache.dir
