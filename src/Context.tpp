@@ -81,7 +81,7 @@ namespace SparTECS {
     }
 
     template <typename Component>
-    bool Context::hasComponent(Entity entity) const {
+    bool Context::hasComponent(Entity entity) {
         return getPool<Component>().has(entity);
     }
 

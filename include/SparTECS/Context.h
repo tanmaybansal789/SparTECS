@@ -33,7 +33,7 @@ namespace SparTECS {
         Component& getComponent(Entity entity);
 
         template <typename Component>
-        bool hasComponent(Entity entity) const;
+        bool hasComponent(Entity entity);
 
         EventManager& getEventManager();
 
