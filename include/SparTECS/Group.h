@@ -12,13 +12,20 @@
 #include <iostream>
 
 namespace SparTECS {
+    class BaseGroup {
+    public:
+        virtual ~BaseGroup() = default;
+        virtual void addEntity(Entity entity) = 0;
+        virtual void removeEntity(Entity entity) = 0;
+    };
+
     template <typename... Components>
-    class Group {
+    class Group : public BaseGroup {
     public:
         Group() = default;
 
-        void addEntity(Entity entity);
-        void removeEntity(Entity entity);
+        void addEntity(Entity entity) override;
+        void removeEntity(Entity entity) override;
 
         std::unordered_set<Entity>& getEntities();
     private:

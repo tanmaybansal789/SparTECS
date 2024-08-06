@@ -13,15 +13,22 @@
 
 namespace SparTECS {
 
+    class BasePool {
+    public:
+        virtual ~BasePool() = default;
+        virtual void remove(Entity entity) = 0;
+        virtual bool has(Entity entity) const = 0;
+    };
+
     template <typename Component>
-    class Pool {
+    class Pool : public BasePool{
     public:
         Pool();
 
         Component& add(Entity entity, Component component);
-        void remove(Entity entity);
+        void remove(Entity entity) override;
         Component& get(Entity entity);
-        bool has(Entity entity) const;
+        bool has(Entity entity) const override;
 
     private:
         std::vector<Component> dense;

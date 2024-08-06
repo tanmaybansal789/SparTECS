@@ -28,7 +28,7 @@ namespace SparTECS {
         size_t index = sparse[getIndex(entity)];
         dense[index] = dense.back();
         dense.pop_back();
-        sparse[getIndex(entity)] = -1;
+        sparse[getIndex(entity)] = NULL_SPARSE_INDEX;
     }
 
     template <typename Component>
