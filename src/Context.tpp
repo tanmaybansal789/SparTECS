@@ -5,17 +5,17 @@
 #ifndef CONTEXT_TPP
 #define CONTEXT_TPP
 
+#include "Context.h"
 #include "Events.h"
 
 #include <iostream>
+#include <typeindex>
 
 namespace SparTECS {
 
     inline Entity Context::createEntity() {
-
         Entity entity;
         if (available) {
-
             auto nextIndex = getIndex(next);
             auto nextVersion = getVersion(next);
 
@@ -30,8 +30,6 @@ namespace SparTECS {
             --available;
         } else {
             entity = buildEntity(entities.size(), 0);
-
-
             entities.push_back(entity);
         }
 
@@ -48,6 +46,12 @@ namespace SparTECS {
         auto entityVersion = getVersion(entity);
         auto nextIndex = getIndex(next);
         auto nextVersion = getVersion(next);
+
+        // Remove components from pools
+        for (auto& [type, pool] : pools) {
+            if (pool->has(entity))
+                pool->remove(entity);
+        }
 
         // Swap the indices of next and entity, and increment the version of the entity
         entities[entityIndex] = buildEntity(nextIndex, entityVersion + 1);
@@ -86,14 +90,17 @@ namespace SparTECS {
     }
 
     template <typename Component>
-    Pool<Component>& Context::getPool() const {
-        static Pool<Component> pool;
-        return pool;
+    Pool<Component>& Context::getPool() {
+        auto type = std::type_index(typeid(Component));
+        if (pools.find(type) == pools.end()) {
+            pools[type] = std::make_unique<Pool<Component>>();
+        }
+        return *static_cast<Pool<Component>*>(pools[type].get());
     }
 
     template <typename... Components>
     Group<Components...>& Context::initialiseGroup() {
-        auto& group = getGroup<Components...>();
+        auto& group = getGroupInternal<Components...>();
 
         // Add a listener for each ComponentAddedEvent for each component type
         (eventManager.addListener<InternalEvents::ComponentAddedEvent<Components>>([&group, this](const auto& event) {
@@ -117,10 +124,17 @@ namespace SparTECS {
 
     template<typename... Components>
     Group<Components...>& Context::getGroup() {
-        static Group<Components...> group;
-        return group;
+        return getGroupInternal<Components...>();
     }
-;
+
+    template <typename... Components>
+    Group<Components...>& Context::getGroupInternal() {
+        auto type = std::type_index(typeid(Group<Components...>));
+        if (groups.find(type) == groups.end()) {
+            groups[type] = std::make_unique<Group<Components...>>();
+        }
+        return *static_cast<Group<Components...>*>(groups[type].get());
+    }
 
 } // namespace SparTECS
 
